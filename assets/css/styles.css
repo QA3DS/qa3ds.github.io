@@ -330,6 +330,8 @@ section.ice { background: var(--ice); }
   align-items: stretch;
 }
 .media-row figure { margin: 0; }
+.media-row.process { margin-top: 48px; }
+.steps.stacked { grid-template-columns: 1fr; margin: 0; align-content: center; }
 .photo {
   border-radius: var(--radius);
   overflow: hidden;
