@@ -10,6 +10,9 @@ Es un sitio estático: HTML y CSS sin dependencias ni paso de compilación. Para
 index.html              ← todo el contenido, organizado por secciones con comentarios <!-- ... -->
 assets/css/styles.css   ← estilos (colores en :root)
 assets/img/             ← imágenes optimizadas (.webp)
+proceso/index.html      ← animación en modo presentación (qa3ds.github.io/proceso/)
+proceso/liofilizacion-sin-conexion.html  ← la misma página en un solo archivo, generada
+tools/build_offline.py  ← genera la versión sin conexión
 favicon.png
 .nojekyll               ← evita que GitHub procese el sitio con Jekyll
 ```
@@ -23,6 +26,14 @@ favicon.png
 | Sumar un hito | `index.html` → sección `<!-- TRAYECTORIA -->` (`class="hl"` lo resalta en rojo) |
 | Cambiar una cifra de resultados | `index.html` → sección `<!-- RESULTADOS -->` |
 | Agregar una imagen | guardarla en `assets/img/` (idealmente .webp y de hasta ~1200 px de ancho) |
+
+## Animación del proceso
+
+La lógica está en `assets/js/liofilizacion.js` y la usan tanto la portada como `proceso/`. Si se cambia la animación, sus estilos o `proceso/index.html`, hay que regenerar la versión sin conexión:
+
+```bash
+python3 tools/build_offline.py
+```
 
 ## Reglas de contenido
 

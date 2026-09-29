@@ -2,7 +2,7 @@
    Un único reloj `t` (ms) recorre cuatro etapas; cada cuadro se dibuja como
    función de t, así que saltar de etapa o pausar no deja estados a medias.
    Valores de referencia de los ensayos del PID: condensador ~ −40 °C,
-   presión 1–2 mmHg, muestra de 50 g que pierde ~92 % de su peso. */
+   presión 1–2 mmHg, muestra de 50 g que pierde más del 92 % de su peso. */
 (() => {
   const root = document.getElementById('lio-anim');
   if (!root) return;
@@ -50,7 +50,7 @@
     { dur: 5500, text: 'El ruibarbo fresco es casi un 94 % agua. Primero lo congelamos entre −18 y −25 °C: el agua de sus células se transforma en pequeños cristales de hielo.' },
     { dur: 5000, text: 'En la cámara del liofilizador, una bomba extrae el aire. La presión baja a 1–2 mmHg (unas 500 veces menos que la atmosférica), por debajo del punto triple del agua: en esas condiciones el hielo ya no puede derretirse.' },
     { dur: 9500, text: 'Con un aporte suave de calor, el hielo pasa directamente a vapor sin volverse líquido: eso es la sublimación. El vapor viaja hasta el condensador, a unos −40 °C, donde vuelve a congelarse como escarcha.' },
-    { dur: 5000, text: 'Queda un producto seco, liviano y poroso que conserva su forma: una muestra de 50 g termina pesando unos 4 g. Como el agua nunca pasó a líquido ni se usaron altas temperaturas, se evita buena parte del daño que produce el secado convencional.' },
+    { dur: 5000, text: 'Queda un producto seco, liviano y poroso que conserva su forma: una muestra de 50 g termina pesando menos de 4 g. Como el agua nunca pasó a líquido ni se usaron altas temperaturas, se evita buena parte del daño que produce el secado convencional.' },
   ];
   const START = [];
   let acc = 0;
@@ -210,7 +210,8 @@
         gone += clamp(u);
       }
     }
-    const mass = 50 - 46 * (gone / water.length);
+    const mass = 50 - 46.25 * (gone / water.length); // ~92,5 % de pérdida: entre 92 % (Excel) y 93,4 % (fórmula corregida)
+    const massTxt = mass < 10 ? `${fmt(mass.toFixed(1))} g` : `${Math.round(mass)} g`;
 
     // Aire
     for (const a of air) {
@@ -234,7 +235,7 @@
     els.coil.setAttribute('stroke', i >= 1 ? '#6fb0dc' : '#9aa7b2');
     const k = Math.max(s * 0.85, r);
     els.piece.setAttribute('fill', `rgb(${fresh.map((c, n) => Math.round(lerp(c, dried[n], k))).join(',')})`);
-    els.pieceLabel.textContent = i < 3 ? (i === 0 && f < 0.5 ? 'Ruibarbo fresco · 50 g' : `Ruibarbo · ${Math.round(mass)} g`) : 'Seco, liviano y poroso · ~4 g';
+    els.pieceLabel.textContent = i < 3 ? (i === 0 && f < 0.5 ? 'Ruibarbo fresco · 50 g' : `Ruibarbo · ${massTxt}`) : 'Seco, liviano y poroso · < 4 g';
 
     if (i >= 1 && i <= 2 && !reduce) fanAngle = (fanAngle + dt * 0.5) % 360;
     els.fan.setAttribute('transform', `rotate(${fanAngle} 435 340)`);
@@ -247,7 +248,7 @@
     // Lecturas
     els.T.textContent = `${fmt(Math.round(T))} °C`;
     els.P.textContent = pres >= 10 ? `${Math.round(pres)} mmHg` : `${fmt(pres.toFixed(1))} mmHg`;
-    els.M.textContent = `${Math.round(mass)} g`;
+    els.M.textContent = massTxt;
 
     // Pestañas y texto
     els.tabs.forEach((b, n) => {
@@ -263,6 +264,7 @@
   /* ---------- Reloj y controles ---------- */
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let time = 0, playing = !reduce, visible = false, last = null, raf = null;
+  let stopAt = null; // en pausa, una etapa pedida se reproduce una vez y se detiene al final
 
   const setPlaying = on => {
     playing = on;
@@ -277,6 +279,7 @@
     last = now;
     if (playing) {
       time += dt;
+      if (stopAt != null && time >= stopAt) { time = stopAt; stopAt = null; setPlaying(false); }
       if (time > TOTAL + HOLD) time = 0;
     }
     render(time, now, dt);
@@ -285,13 +288,34 @@
   }
   const kick = () => { if (!raf && visible) raf = requestAnimationFrame(frame); };
 
-  els.play.addEventListener('click', () => setPlaying(!playing));
-  els.tabs.forEach((b, n) => b.addEventListener('click', () => {
-    // Reproduciendo: arranca la etapa desde el principio. En pausa: muestra cómo termina.
-    time = playing ? START[n] : START[n] + STAGES[n].dur - 1;
+  // Ir a una etapa. Reproduciendo: sigue en continuo desde ahí.
+  // En pausa: reproduce solo esa etapa y se detiene (útil para presentar).
+  const goStage = n => {
+    n = clamp(n, 0, STAGES.length - 1);
+    if (reduce) {
+      time = START[n] + STAGES[n].dur - 1;
+    } else {
+      time = START[n];
+      if (!playing || stopAt != null) { stopAt = START[n] + STAGES[n].dur - 1; setPlaying(true); }
+    }
     render(time, performance.now(), 0);
     kick();
-  }));
+  };
+
+  els.play.addEventListener('click', () => { stopAt = null; setPlaying(!playing); });
+  els.tabs.forEach((b, n) => b.addEventListener('click', () => goStage(n)));
+
+  // Modo presentación: flechas para avanzar o retroceder de etapa, espacio para pausar.
+  if (root.dataset.keys === 'page') {
+    document.addEventListener('keydown', e => {
+      if (e.target.closest && e.target.closest('input, textarea, select')) return;
+      const cur = stageAt(Math.min(time, TOTAL - 1))[0];
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goStage(cur + 1); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goStage(cur - 1); }
+      else if (e.key === 'Home') { e.preventDefault(); goStage(0); }
+      else if (e.key === ' ' && e.target === document.body) { e.preventDefault(); stopAt = null; setPlaying(!playing); }
+    });
+  }
 
   new IntersectionObserver(entries => {
     visible = entries[0].isIntersecting;

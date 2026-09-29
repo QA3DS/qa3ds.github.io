@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Liofilización del ruibarbo · QA3DS</title>
+  <meta name="description" content="Animación del proceso de liofilización y resultados del PID PP9884 (UTN FRTDF), para presentar.">
+  <meta name="theme-color" content="#0d3656">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    body { background: var(--paper-2); }
+    .pres-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; }
+    .pres-top a { font-size: 0.9rem; font-weight: 500; text-decoration: none; }
+    .pres .lio { margin-top: 0; }
+    .lio-title { font-size: clamp(1.4rem, 3vw, 2rem); margin: 0; }
+    .lio-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .lio-full {
+      font: inherit; font-size: 0.88rem; font-weight: 600; color: #fff; background: var(--navy);
+      border: 1.5px solid var(--navy); border-radius: 999px; padding: 7px 16px; cursor: pointer;
+    }
+    .lio-full:hover { background: var(--navy-2); }
+    .lio-full:focus-visible { outline: 3px solid var(--rhubarb-soft); outline-offset: 2px; }
+    .lio:fullscreen {
+      border-radius: 0; border: 0; padding: 3vh 4vw; overflow: auto;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .lio:fullscreen .lio-body, .lio:fullscreen .lio-tabs, .lio:fullscreen .lio-caption,
+    .lio:fullscreen .lio-head, .lio:fullscreen .lio-note {
+      width: 100%; max-width: calc((100vh - 320px) * 2.3); margin-inline: auto;
+    }
+    .lio:fullscreen .lio-caption p { font-size: 1.3rem; }
+    .lio:fullscreen .lio-note { display: none; }
+
+    .facts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+    .fact { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
+    .fact .v { font-family: var(--serif); font-size: 1.9rem; font-weight: 600; color: var(--navy); line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .fact .l { font-weight: 600; margin-top: 6px; }
+    .fact p { font-size: 0.9rem; color: var(--ink-soft); margin: 4px 0 0; }
+    .howto { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 0.88rem; color: var(--ink-soft); margin-top: 14px; }
+    kbd { font-family: ui-monospace, Menlo, monospace; font-size: 0.8rem; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; background: #fff; color: var(--ink); }
+    .source { font-size: 0.82rem; color: var(--ink-soft); margin-top: 18px; }
+    @media (max-width: 960px) { .facts-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .facts-grid { grid-template-columns: 1fr; } .howto { display: none; } }
+  </style>
+</head>
+<body>
+<main class="wrap pres">
+  <div class="pres-top">
+    <a class="brand" href="../"><img src="../assets/img/logo-qa3ds.webp" alt="" width="38" height="38"><span>QA<sup>3</sup>DS</span></a>
+    <a href="../#proyecto">Volver al sitio del grupo →</a>
+  </div>
+
+      <div class="lio" id="lio-anim" data-keys="page">
+        <div class="lio-head">
+          <div>
+            <p class="eyebrow" style="margin-bottom:.2rem">PID PP9884 · UTN FRTDF · Grupo QA3DS</p>
+            <h1 class="lio-title">Cómo se liofiliza el ruibarbo fueguino</h1>
+          </div>
+          <div class="lio-actions">
+            <button class="lio-play" type="button" aria-pressed="true">Pausar</button>
+            <button class="lio-full" type="button">Pantalla completa</button>
+          </div>
+        </div>
+
+        <div class="lio-tabs" role="group" aria-label="Etapas del proceso">
+          <button class="lio-tab" type="button" data-stage="0"><b>1 · Congelación</b>el agua se vuelve hielo<span class="bar"></span></button>
+          <button class="lio-tab" type="button" data-stage="1"><b>2 · Vacío</b>se extrae el aire<span class="bar"></span></button>
+          <button class="lio-tab" type="button" data-stage="2"><b>3 · Sublimación</b>el hielo pasa a vapor<span class="bar"></span></button>
+          <button class="lio-tab" type="button" data-stage="3"><b>4 · Resultado</b>producto seco y liviano<span class="bar"></span></button>
+        </div>
+
+        <div class="lio-body">
+          <svg class="lio-scene" viewBox="0 0 560 380" role="img"
+               aria-label="Esquema animado de un liofilizador: cámara con un trozo de ruibarbo, condensador y bomba de vacío">
+            <defs>
+              <linearGradient id="lio-glass" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#f4f9fc"/><stop offset="1" stop-color="#e3eef5"/>
+              </linearGradient>
+            </defs>
+
+            <!-- cámara -->
+            <text class="lio-label" id="lio-chamber-label" x="160" y="28" text-anchor="middle">Congelador</text>
+            <rect x="20" y="40" width="280" height="250" rx="22" fill="url(#lio-glass)" stroke="#9fb3c2" stroke-width="2"/>
+            <g id="lio-freezer" opacity="0">
+              <rect x="21" y="41" width="278" height="248" rx="21" fill="#cfe6f7"/>
+              <g class="lio-flakes" stroke="#7fb4dc" stroke-width="2" stroke-linecap="round">
+                <path d="M50 70v18M41 79h18M44 73l12 12M56 73l-12 12"/>
+                <path d="M262 64v18M253 73h18M256 67l12 12M268 67l-12 12"/>
+                <path d="M270 128v14M263 135h14M265 130l10 10M275 130l-10 10"/>
+              </g>
+            </g>
+            <line x1="45" y1="250" x2="275" y2="250" stroke="#8a9aa8" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- calor del ambiente -->
+            <g id="lio-heat" opacity="0" stroke="#d9822b" stroke-width="2.5" fill="none" stroke-linecap="round">
+              <path class="lio-wave" d="M100 282c-5-6 5-10 0-16s5-10 0-16"/>
+              <path class="lio-wave" d="M160 282c-5-6 5-10 0-16s5-10 0-16"/>
+              <path class="lio-wave" d="M220 282c-5-6 5-10 0-16s5-10 0-16"/>
+              <text class="lio-label" x="160" y="306" text-anchor="middle" stroke="none" fill="#b86b12">calor suave</text>
+            </g>
+
+            <!-- ruibarbo -->
+            <rect id="lio-piece" x="70" y="160" width="180" height="86" rx="20" fill="#c83f58"/>
+            <g id="lio-pores"></g>
+            <text class="lio-label" id="lio-piece-label" x="160" y="152" text-anchor="middle">Ruibarbo fresco · 50 g</text>
+
+            <!-- tubo -->
+            <rect x="298" y="90" width="64" height="20" fill="#e3eef5" stroke="#9fb3c2" stroke-width="2"/>
+
+            <!-- condensador -->
+            <text class="lio-label" x="435" y="28" text-anchor="middle">Condensador −40 °C</text>
+            <rect x="360" y="40" width="150" height="250" rx="18" fill="url(#lio-glass)" stroke="#9fb3c2" stroke-width="2"/>
+            <path id="lio-coil" fill="none" stroke="#9aa7b2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="lio-frost"></g>
+
+            <!-- bomba de vacío -->
+            <rect x="427" y="288" width="16" height="28" fill="#e3eef5" stroke="#9fb3c2" stroke-width="2"/>
+            <circle cx="435" cy="340" r="26" fill="#fff" stroke="#6b7c8a" stroke-width="2.5"/>
+            <g id="lio-fan" stroke="#6b7c8a" stroke-width="3" stroke-linecap="round">
+              <line x1="435" y1="324" x2="435" y2="356"/><line x1="419" y1="340" x2="451" y2="340"/>
+            </g>
+            <text class="lio-label" x="400" y="344" text-anchor="end">Bomba de vacío</text>
+
+            <g id="lio-particles"></g>
+          </svg>
+
+          <div class="lio-side">
+            <svg class="lio-phase" viewBox="0 0 300 250" role="img"
+                 aria-label="Diagrama de fases del agua: el punto muestra la temperatura y la presión del producto en cada etapa">
+              <g id="lio-phase-g"></g>
+            </svg>
+            <dl class="lio-readouts">
+              <div><dt>Temperatura del producto</dt><dd id="lio-t">20 °C</dd></div>
+              <div><dt>Presión en la cámara</dt><dd id="lio-p">760 mmHg</dd></div>
+              <div><dt>Masa de la muestra</dt><dd id="lio-m">50 g</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="lio-caption" aria-live="polite">
+          <p id="lio-text"></p>
+        </div>
+        <p class="lio-note">Esquema simplificado. La animación dura segundos; en nuestros ensayos el ciclo completo lleva entre 36 y 48 horas.</p>
+      </div>
+
+  <div class="howto" aria-hidden="true">
+    <span><kbd>→</kbd> <kbd>←</kbd> avanzar o volver una etapa</span>
+    <span><kbd>Espacio</kbd> pausar o reanudar</span>
+    <span><kbd>F</kbd> pantalla completa</span>
+    <span>En pausa, cada etapa se reproduce una vez y se detiene.</span>
+    <span><a href="liofilizacion-sin-conexion.html" download>Descargar versión sin conexión</a></span>
+  </div>
+
+  <section style="padding:48px 0 64px">
+    <p class="eyebrow">Lo que medimos</p>
+    <h2 style="margin-bottom:0">Resultados del PID con ruibarbo de Tierra del Fuego</h2>
+    <div class="facts-grid">
+      <div class="fact"><div class="v">36–48 h</div><div class="l">Ciclo práctico recomendado</div><p>La curva se estabiliza a las 48 h en las muestras congeladas y a las 72 h en las frescas.</p></div>
+      <div class="fact"><div class="v">&gt; 92 %</div><div class="l">Pérdida de peso al final del ciclo</div><p>Una muestra de 50 g de ruibarbo termina pesando menos de 4 g, sin perder su forma.</p></div>
+      <div class="fact"><div class="v">~94 %</div><div class="l">Agua del ruibarbo fresco</div><p>Medida por gravimetría sobre peciolos cortados en trozos de ~1 cm.</p></div>
+      <div class="fact"><div class="v">Desde 36 h</div><div class="l">Los tres pretratamientos dan lo mismo</div><p>Fresco, congelado y ultracongelado difieren a las 24 h (el fresco seca más rápido) y después convergen.</p></div>
+      <div class="fact"><div class="v">261</div><div class="l">Mediciones en tres tandas</div><p>Noviembre de 2024, enero y febrero de 2025. El resultado no dependió del mes: el proceso es reproducible.</p></div>
+      <div class="fact"><div class="v">−35 a −41 °C</div><div class="l">Condensador del RIFICOR LT-8</div><p>Con presiones de 1,1 a 2,4 mmHg. Dentro de ese rango, las condiciones del equipo no cambiaron el resultado.</p></div>
+    </div>
+    <p class="source">Fuente: análisis compilado del PID PP9884 «Análisis del proceso de liofilizado aplicado a alimentos de producción local/regional en la Provincia de Tierra del Fuego», UTN Facultad Regional Tierra del Fuego. Datos y código en <a href="https://github.com/QA3DS/PID-Liofilizados">github.com/QA3DS/PID-Liofilizados</a>.</p>
+  </section>
+</main>
+
+<script src="../assets/js/liofilizacion.js" defer></script>
+<script>
+  document.querySelector('.lio-full').addEventListener('click', () => {
+    const el = document.getElementById('lio-anim');
+    if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+    if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  });
+  document.addEventListener('fullscreenchange', () => {
+    document.querySelector('.lio-full').textContent = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa';
+  });
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey) document.querySelector('.lio-full').click();
+  });
+</script>
+</body>
+</html>
