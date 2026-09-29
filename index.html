@@ -141,50 +141,123 @@
         </div>
       </div>
 
-      <div class="media-row process">
-        <div class="steps stacked">
-          <div class="step">
-            <div class="n">1</div>
-            <h3>Congelación</h3>
-            <p>Los peciolos de ruibarbo se cortan en trozos de ~1 cm y se congelan antes de entrar al equipo.</p>
+      <!-- ANIMACIÓN DEL PROCESO (lógica en assets/js/liofilizacion.js) -->
+      <div class="lio" id="lio-anim">
+        <div class="lio-head">
+          <div>
+            <p class="eyebrow" style="margin-bottom:.2rem">Cómo funciona</p>
+            <h3 style="margin:0">El proceso de liofilización, paso a paso</h3>
           </div>
-          <div class="step">
-            <div class="n">2</div>
-            <h3>Vacío</h3>
-            <p>En el liofilizador, un condensador a unos −40 °C y la baja presión crean las condiciones para que el hielo no se funda.</p>
-          </div>
-          <div class="step">
-            <div class="n">3</div>
-            <h3>Sublimación</h3>
-            <p>El hielo pasa directamente a vapor. Pesamos las muestras a lo largo del tiempo para seguir la curva de secado.</p>
+          <button class="lio-play" type="button" aria-pressed="true">Pausar</button>
+        </div>
+
+        <div class="lio-tabs" role="group" aria-label="Etapas del proceso">
+          <button class="lio-tab" type="button" data-stage="0"><b>1 · Congelación</b>el agua se vuelve hielo<span class="bar"></span></button>
+          <button class="lio-tab" type="button" data-stage="1"><b>2 · Vacío</b>se extrae el aire<span class="bar"></span></button>
+          <button class="lio-tab" type="button" data-stage="2"><b>3 · Sublimación</b>el hielo pasa a vapor<span class="bar"></span></button>
+          <button class="lio-tab" type="button" data-stage="3"><b>4 · Resultado</b>producto seco y liviano<span class="bar"></span></button>
+        </div>
+
+        <div class="lio-body">
+          <svg class="lio-scene" viewBox="0 0 560 380" role="img"
+               aria-label="Esquema animado de un liofilizador: cámara con un trozo de ruibarbo, condensador y bomba de vacío">
+            <defs>
+              <linearGradient id="lio-glass" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#f4f9fc"/><stop offset="1" stop-color="#e3eef5"/>
+              </linearGradient>
+            </defs>
+
+            <!-- cámara -->
+            <text class="lio-label" id="lio-chamber-label" x="160" y="28" text-anchor="middle">Congelador</text>
+            <rect x="20" y="40" width="280" height="250" rx="22" fill="url(#lio-glass)" stroke="#9fb3c2" stroke-width="2"/>
+            <g id="lio-freezer" opacity="0">
+              <rect x="21" y="41" width="278" height="248" rx="21" fill="#cfe6f7"/>
+              <g class="lio-flakes" stroke="#7fb4dc" stroke-width="2" stroke-linecap="round">
+                <path d="M50 70v18M41 79h18M44 73l12 12M56 73l-12 12"/>
+                <path d="M262 64v18M253 73h18M256 67l12 12M268 67l-12 12"/>
+                <path d="M270 128v14M263 135h14M265 130l10 10M275 130l-10 10"/>
+              </g>
+            </g>
+            <line x1="45" y1="250" x2="275" y2="250" stroke="#8a9aa8" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- calor del ambiente -->
+            <g id="lio-heat" opacity="0" stroke="#d9822b" stroke-width="2.5" fill="none" stroke-linecap="round">
+              <path class="lio-wave" d="M100 282c-5-6 5-10 0-16s5-10 0-16"/>
+              <path class="lio-wave" d="M160 282c-5-6 5-10 0-16s5-10 0-16"/>
+              <path class="lio-wave" d="M220 282c-5-6 5-10 0-16s5-10 0-16"/>
+              <text class="lio-label" x="160" y="306" text-anchor="middle" stroke="none" fill="#b86b12">calor suave</text>
+            </g>
+
+            <!-- ruibarbo -->
+            <rect id="lio-piece" x="70" y="160" width="180" height="86" rx="20" fill="#c83f58"/>
+            <g id="lio-pores"></g>
+            <text class="lio-label" id="lio-piece-label" x="160" y="152" text-anchor="middle">Ruibarbo fresco · 50 g</text>
+
+            <!-- tubo -->
+            <rect x="298" y="90" width="64" height="20" fill="#e3eef5" stroke="#9fb3c2" stroke-width="2"/>
+
+            <!-- condensador -->
+            <text class="lio-label" x="435" y="28" text-anchor="middle">Condensador −40 °C</text>
+            <rect x="360" y="40" width="150" height="250" rx="18" fill="url(#lio-glass)" stroke="#9fb3c2" stroke-width="2"/>
+            <path id="lio-coil" fill="none" stroke="#9aa7b2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="lio-frost"></g>
+
+            <!-- bomba de vacío -->
+            <rect x="427" y="288" width="16" height="28" fill="#e3eef5" stroke="#9fb3c2" stroke-width="2"/>
+            <circle cx="435" cy="340" r="26" fill="#fff" stroke="#6b7c8a" stroke-width="2.5"/>
+            <g id="lio-fan" stroke="#6b7c8a" stroke-width="3" stroke-linecap="round">
+              <line x1="435" y1="324" x2="435" y2="356"/><line x1="419" y1="340" x2="451" y2="340"/>
+            </g>
+            <text class="lio-label" x="400" y="344" text-anchor="end">Bomba de vacío</text>
+
+            <g id="lio-particles"></g>
+          </svg>
+
+          <div class="lio-side">
+            <svg class="lio-phase" viewBox="0 0 300 250" role="img"
+                 aria-label="Diagrama de fases del agua: el punto muestra la temperatura y la presión del producto en cada etapa">
+              <g id="lio-phase-g"></g>
+            </svg>
+            <dl class="lio-readouts">
+              <div><dt>Temperatura del producto</dt><dd id="lio-t">20 °C</dd></div>
+              <div><dt>Presión en la cámara</dt><dd id="lio-p">760 mmHg</dd></div>
+              <div><dt>Masa de la muestra</dt><dd id="lio-m">50 g</dd></div>
+            </dl>
           </div>
         </div>
+
+        <div class="lio-caption" aria-live="polite">
+          <p id="lio-text"></p>
+        </div>
+        <p class="lio-note">Esquema simplificado. La animación dura segundos; en nuestros ensayos el ciclo completo lleva entre 36 y 48 horas.</p>
+      </div>
+
+      <h3 class="subhead">Matrices de estudio</h3>
+      <div class="media-row matrices-row" style="margin-top:16px">
         <figure class="photo tall">
           <img src="assets/img/liofilizador-rificor.webp" width="1100" height="1467" loading="lazy"
                alt="Liofilizador RIFICOR LT-8 en el laboratorio de la UTN FRTDF, con frascos de vidrio que contienen trozos de ruibarbo envueltos en papel de aluminio">
           <figcaption>Liofilizador RIFICOR LT-8 de la UTN FRTDF (Río Grande) durante un ensayo con ruibarbo.</figcaption>
         </figure>
-      </div>
-
-      <h3 class="subhead">Matrices de estudio</h3>
-      <div class="matrices" style="margin-top:16px">
-        <div class="matrix active">
-          <span class="badge red">Matriz activa</span>
-          <h3 style="margin-top:10px">Ruibarbo</h3>
-          <div class="sci">Rheum rhabarbarum L.</div>
-          <p>Peciolos provenientes de una huerta doméstica de Río Grande y de Estancia Viamonte. Es la matriz con la que se completaron todos los ensayos experimentales del proyecto.</p>
-        </div>
-        <div class="matrix">
-          <span class="badge muted">Línea futura</span>
-          <h3 style="margin-top:10px">Salicornia</h3>
-          <div class="sci">Sarcocornia magellanica</div>
-          <p>Planteada en la propuesta original; queda como posible línea para un próximo proyecto.</p>
-        </div>
-        <div class="matrix">
-          <span class="badge muted">Línea futura</span>
-          <h3 style="margin-top:10px">Erizo de mar</h3>
-          <div class="sci">Loxechinus albus · Pseudechinus magellanicus</div>
-          <p>Relevamiento bibliográfico realizado; posible línea para un próximo proyecto.</p>
+        <div class="matrices stacked">
+          <div class="matrix active">
+            <span class="badge red">Matriz activa</span>
+            <h3 style="margin-top:10px">Ruibarbo</h3>
+            <div class="sci">Rheum rhabarbarum L.</div>
+            <p>Peciolos provenientes de una huerta doméstica de Río Grande y de Estancia Viamonte, cortados en trozos de ~1 cm. Es la matriz con la que se completaron todos los ensayos experimentales del proyecto.</p>
+          </div>
+          <div class="matrix">
+            <span class="badge muted">Línea futura</span>
+            <h3 style="margin-top:10px">Salicornia</h3>
+            <div class="sci">Sarcocornia magellanica</div>
+            <p>Planteada en la propuesta original; queda como posible línea para un próximo proyecto.</p>
+          </div>
+          <div class="matrix">
+            <span class="badge muted">Línea futura</span>
+            <h3 style="margin-top:10px">Erizo de mar</h3>
+            <div class="sci">Loxechinus albus · Pseudechinus magellanicus</div>
+            <p>Relevamiento bibliográfico realizado; posible línea para un próximo proyecto.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -333,6 +406,7 @@
   </div>
 </footer>
 
+<script src="assets/js/liofilizacion.js" defer></script>
 <script>
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.getElementById('nav');
